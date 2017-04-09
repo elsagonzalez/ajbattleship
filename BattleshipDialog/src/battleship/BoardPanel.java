@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.*;
+import javax.swing.JPanel;
 import battleship.model.Board;
 import battleship.model.Place;
 import static battleship.Constants.*;
