@@ -27,9 +27,11 @@ public aspect AddCheatKey {
 	protected Color missColor;
 	protected Color boatColor = Color.green;
 	
+	pointcut constructor(): execution(BoardPanel.new(*));
+	
+	//around(BoardPanel p): execution(constructor()) && target(p){
 	void around(Board b, int tMargin, int lMargin, int pSize, Color bColor, 
-			Color hColor, Color mColor, BoardPanel p): execution(void 
-			BoardPanel(Board, int, int, int, Color, Color, Color)) && 
+			Color hColor, Color mColor, BoardPanel p): constructor() && 
 			args(b, tMargin , lMargin,  pSize, bColor, hColor, mColor) && target(p){
 		ActionMap actionMap = p.getActionMap();
 		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
