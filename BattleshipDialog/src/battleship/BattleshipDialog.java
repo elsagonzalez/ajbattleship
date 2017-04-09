@@ -32,7 +32,7 @@ public class BattleshipDialog extends JDialog {
     private final static Random random = new Random();
 
     /** To start a new game. */
-    private final JButton playButton = new JButton("Play");
+    public final JButton playButton = new JButton("Play");
 
     /** Message bar to display the number of shots and the outcome. */
     private final JLabel msgBar = new JLabel("Shots: 0");
