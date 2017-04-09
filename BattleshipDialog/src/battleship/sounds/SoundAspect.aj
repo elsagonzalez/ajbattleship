@@ -16,10 +16,8 @@ public aspect SoundAspect {
 	private static final String SOUND_DIR = "sounds/";
 	before(Place x): call(void Board.hit(Place)) && args(x){
 		//stuff here
-		if (!x.isEmpty()){
-		    if (x.ship().isSunk()){
-		    	playAudio("sunk.m4r");
-		    }
+		if (!x.isEmpty() && x.ship().isSunk()){
+			playAudio("sunk.m4r");
 		}
 		else{
 			playAudio("hit.m4r");
