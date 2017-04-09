@@ -1,4 +1,4 @@
-package ext;
+package battleship.cheat;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -27,10 +27,13 @@ public aspect AddCheatKey {
 	protected Color missColor;
 	protected Color boatColor = Color.green;
 	
-	after(Board b, int tMargin, int lMargin, int pSize, Color bColor, Color hColor, Color mColor, BoardPanel p): execution(BoardPanel(*)) && args(b, tMargin , lMargin,  pSize, bColor, hColor, mColor) && target(p){
-		ActionMap actionMap = getActionMap();
+	void around(Board b, int tMargin, int lMargin, int pSize, Color bColor, 
+			Color hColor, Color mColor, BoardPanel p): execution(void 
+			BoardPanel(Board, int, int, int, Color, Color, Color)) && 
+			args(b, tMargin , lMargin,  pSize, bColor, hColor, mColor) && target(p){
+		ActionMap actionMap = p.getActionMap();
 		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
-		InputMap inputMap = getInputMap(condition);
+		InputMap inputMap = p.getInputMap(condition);
 		String cheat = "Cheat";
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), cheat);
 		actionMap.put(cheat, new KeyAction(p, cheat));
