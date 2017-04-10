@@ -1,4 +1,4 @@
-package battleship.cheat;
+/*package battleship.cheat;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -15,7 +15,7 @@ import battleship.BoardPanel;
 import battleship.model.Board;
 import battleship.model.Place;
 
-public aspect AddCheatKey {
+privileged public aspect AddCheatKey percflowbelow(constructor()){
 
 	public static boolean showingBoats = false;
 	protected Board board;
@@ -27,9 +27,21 @@ public aspect AddCheatKey {
 	protected Color missColor;
 	protected Color boatColor = Color.green;
 	
-	pointcut constructor(): execution(BoardPanel.new(*));
-	
-	//around(BoardPanel p): execution(constructor()) && target(p){
+	pointcut constructor(): execution(BoardPanel.new(..));
+	/*
+	void around(Board b, int tMargin, int lMargin, int pSize, Color bColor, 
+			Color hColor, Color mColor, BoardPanel p): constructor() && 
+	args(b, tMargin , lMargin,  pSize, bColor, hColor, mColor) && this(p){
+		ActionMap actionMap = p.getActionMap();
+		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
+		InputMap inputMap = p.getInputMap(condition);
+		String cheat = "Cheat";
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), cheat);
+		actionMap.put(cheat, new KeyAction(p, cheat));
+		System.out.println("I am here!");
+		
+	}
+	around(BoardPanel p): execution(constructor()) && target(p){
 	void around(Board b, int tMargin, int lMargin, int pSize, Color bColor, 
 			Color hColor, Color mColor, BoardPanel p): constructor() && 
 			args(b, tMargin , lMargin,  pSize, bColor, hColor, mColor) && target(p){
@@ -47,8 +59,9 @@ public aspect AddCheatKey {
 		boardColor = bColor;
 		hitColor = hColor;
 		missColor = mColor;
+		System.out.println("It works up to here");
 	}
-	
+	/*
 	void around(Graphics g): execution(void drawPlaces(Graphics)) && args(g){
 		if(showingBoats){
 			final Color oldColor = g.getColor();
@@ -99,10 +112,11 @@ public aspect AddCheatKey {
            putValue(ACTION_COMMAND_KEY, command);
        }
        
-       /** Called when a cheat is requested. */
+       /** Called when a cheat is requested. 
        public void actionPerformed(ActionEvent event) {
            toggleCheat();
+           System.out.println("Pressed key");
        }   
     }
 	
-}
+}*/

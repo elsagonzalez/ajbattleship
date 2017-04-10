@@ -3,12 +3,19 @@ package battleship.strat;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import org.aspectj.lang.JoinPoint;
 
 import battleship.BattleshipDialog;
 
-public aspect AddStrategy {
-	void around(BattleshipDialog a): execution(BattleshipDialog.new(*)) && this(a){
-		System.out.println("Created a dialog object");
-		proceed(a);
+privileged public aspect AddStrategy {
+	pointcut constructor(): execution(BattleshipDialog.new(*));
+	pointcut draw(): execution(JPanel BattleshipDialog.makeControlPane());
+	after(BattleshipDialog a): constructor() && target(a){
+		a.playButton.setText("Practice");
+	}
+	JPanel around(): draw(){
+		return proceed();
 	}
 }
