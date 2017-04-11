@@ -1,11 +1,14 @@
 package battleship.sounds;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -17,23 +20,40 @@ public aspect SoundAspect {
 	before(Place x): call(void Board.hit(Place)) && args(x){
 		//stuff here
 		if (!x.isEmpty() && x.ship().isSunk()){
-			playAudio("sunk.m4r");
+			playAudio("sunk.wav");
 		}
 		else{
-			playAudio("hit.m4r");
+			playAudio("hit.wav");
 		}
 	}
-	public static void playAudio(String filename) {
-      try {
-          AudioInputStream audioIn = AudioSystem.getAudioInputStream(
-        		  new FileInputStream(SOUND_DIR + filename));
-          Clip clip = AudioSystem.getClip();
-          clip.open(audioIn);
-          clip.start();
-      } catch (UnsupportedAudioFileException 
-            | IOException | LineUnavailableException e) {
-          e.printStackTrace();
-      }
+	public void playAudio(String filename) {
+		File yourFile = new File(SOUND_DIR+filename);
+	    AudioInputStream stream = null;
+	    AudioFormat format;
+	    DataLine.Info info;
+	    Clip clip = null;
+
+	    try {
+			stream = AudioSystem.getAudioInputStream(yourFile);
+		} catch (UnsupportedAudioFileException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    format = stream.getFormat();
+	    info = new DataLine.Info(Clip.class, format);
+	    try {
+			clip = (Clip) AudioSystem.getLine(info);
+		} catch (LineUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    try {
+			clip.open(stream);
+		} catch (LineUnavailableException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    clip.start();
     }
 	
 }
