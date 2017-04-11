@@ -1,4 +1,4 @@
-/*package battleship.cheat;
+package battleship.cheat;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -9,6 +9,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import battleship.BoardPanel;
@@ -28,6 +29,14 @@ privileged public aspect AddCheatKey percflowbelow(constructor()){
 	protected Color boatColor = Color.green;
 	
 	pointcut constructor(): execution(BoardPanel.new(..));
+	after(BoardPanel a): constructor() && target(a){
+		ActionMap actionMap = a.getActionMap();
+		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
+		InputMap inputMap = a.getInputMap(condition);
+		String cheat = "Cheat";
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), cheat);
+		actionMap.put(cheat, new KeyAction(a, cheat));
+	}
 	/*
 	void around(Board b, int tMargin, int lMargin, int pSize, Color bColor, 
 			Color hColor, Color mColor, BoardPanel p): constructor() && 
@@ -41,7 +50,7 @@ privileged public aspect AddCheatKey percflowbelow(constructor()){
 		System.out.println("I am here!");
 		
 	}
-	around(BoardPanel p): execution(constructor()) && target(p){
+	  around(BoardPanel p): execution(constructor()) && target(p){
 	void around(Board b, int tMargin, int lMargin, int pSize, Color bColor, 
 			Color hColor, Color mColor, BoardPanel p): constructor() && 
 			args(b, tMargin , lMargin,  pSize, bColor, hColor, mColor) && target(p){
@@ -92,7 +101,7 @@ privileged public aspect AddCheatKey percflowbelow(constructor()){
 		else{
 			proceed(g);
 		}
-	}
+	}*/
 	
 	public static void toggleCheat(){
 		if(showingBoats){
@@ -112,11 +121,11 @@ privileged public aspect AddCheatKey percflowbelow(constructor()){
            putValue(ACTION_COMMAND_KEY, command);
        }
        
-       /** Called when a cheat is requested. 
+       /** Called when a cheat is requested. */
        public void actionPerformed(ActionEvent event) {
            toggleCheat();
            System.out.println("Pressed key");
        }   
     }
 	
-}*/
+}
