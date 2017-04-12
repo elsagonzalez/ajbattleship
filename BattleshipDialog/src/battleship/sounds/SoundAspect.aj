@@ -20,10 +20,10 @@ public aspect SoundAspect {
 	before(Place x): call(void Board.hit(Place)) && args(x){
 		//stuff here
 		if (!x.isEmpty() && x.ship().isSunk()){
-			//playAudio("sunk.wav");
+			playAudio("sunk.wav");
 		}
 		else{
-			//playAudio("hit.wav");
+			playAudio("hit.wav");
 		}
 	}
 	public void playAudio(String filename) {
