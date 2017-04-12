@@ -27,6 +27,7 @@ privileged public aspect AddCheatKey {
 	protected Color missColor;
 	protected Color boatColor = Color.green;
 	protected Graphics provisionalGraphics;
+	protected BoardPanel panel;
 	
 	pointcut constructor(): execution(BoardPanel.new(..));
 
@@ -50,14 +51,7 @@ privileged public aspect AddCheatKey {
 		boardColor = bColor;
 		hitColor = hColor;
 		missColor = mColor;
-		System.out.println("It works up to here");
-		
-		if(board == null){
-			System.out.println("... but board is null");
-		}
-		else{
-			System.out.println("YAAAAY");
-		}
+		panel = p;
 	}
 	
 	void around(Graphics g): execution(void drawPlaces(Graphics)) && args(g){
@@ -66,7 +60,6 @@ privileged public aspect AddCheatKey {
 		}
 		else{
 			proceed(g);
-			System.out.println("after preceeding");
 		}
 		provisionalGraphics = g;
 	}
@@ -74,12 +67,11 @@ privileged public aspect AddCheatKey {
 	public void toggleCheat(){
 		if(showingBoats){
 			showingBoats = false;
-			drawNormal();
 		}
 		else{
 			showingBoats = true;
-			drawCheating(provisionalGraphics);
 		}
+		panel.repaint();
 	}
 	
 	protected void drawCheating(Graphics g){
@@ -97,36 +89,15 @@ privileged public aspect AddCheatKey {
 	                g.drawLine(x + 1, y + placeSize - 1,
 	                        x + placeSize - 1, y + 1);
 	            }
-	            else if(p.hasShip()){
-	            	g.setColor(boatColor);
-	            	g.drawLine(x + 1, y + 1,
-	                        x + placeSize - 1, y + placeSize - 1);
-	                g.drawLine(x + 1, y + placeSize - 1,
-	                        x + placeSize - 1, y + 1);
-	            }
 			}
+			else if(p.hasShip()){
+				int x = leftMargin + (p.getX() - 1) * placeSize;
+			    int y = topMargin + (p.getY() - 1) * placeSize;
+		    	g.setColor(boatColor);
+		    	g.fillRect(x + 1, y + 1, placeSize - 1, placeSize - 1);
+		    }
 	    }
 	    g.setColor(oldColor);
-	}
-	
-	protected void drawNormal(){
-		final Color oldColor = provisionalGraphics.getColor();
-        for (Place p: board.places()) {
-    		if (p.isHit()) {
-    		    int x = leftMargin + (p.getX() - 1) * placeSize;
-    		    int y = topMargin + (p.getY() - 1) * placeSize;
-    		    provisionalGraphics.setColor(p.isEmpty() ? missColor : hitColor);
-    		    provisionalGraphics.fillRect(x + 1, y + 1, placeSize - 1, placeSize - 1);
-                if (p.hasShip() && p.ship().isSunk()) {
-                    provisionalGraphics.setColor(Color.BLACK);
-                    provisionalGraphics.drawLine(x + 1, y + 1,
-                            x + placeSize - 1, y + placeSize - 1);
-                    provisionalGraphics.drawLine(x + 1, y + placeSize - 1,
-                            x + placeSize - 1, y + 1);
-                }
-    		}
-        }
-        provisionalGraphics.setColor(oldColor);
 	}
 	
 	@SuppressWarnings("serial")
@@ -136,13 +107,11 @@ privileged public aspect AddCheatKey {
        public KeyAction(BoardPanel boardPanel, String command) {
            this.boardPanel = boardPanel;
            putValue(ACTION_COMMAND_KEY, command);
-           System.out.println("F5 added");
        }
        
        /* Called when a cheat is requested.*/ 
        public void actionPerformed(ActionEvent event) {
            toggleCheat();
-           System.out.println("Pressed key");
        }   
     }
 	
