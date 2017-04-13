@@ -19,20 +19,30 @@ import battleship.model.Ship;
 import battleship.model.Place;
 
 privileged public aspect AddStrategy {
+	//member variables
+	SmartStrategy strat;
+	Board board;
+	JDialog player;
+	BoardPanel boardPanel;
+	int size = 10;
+	
 	pointcut constructor(): execution(BattleshipDialog.new(*));
 	pointcut draw(): execution(JPanel BattleshipDialog.makeControlPane());
+	pointcut places(): execution(void BoardPanel.drawPlaces(*));
 	pointcut hit(): execution(void BoardPanel.placeClicked(Place));
 	after(Place x): hit() && args(x) {
+		respondHit();
+		//TODO: bug here not going into if
 		if(!x.battleBoard.isGameOver() && !x.isHit())
 			respondHit();
 	}
 	after(BattleshipDialog a): constructor() && target(a){
 		a.playButton.setText("Practice");
 	}
-	//member variables
-	SmartStrategy strat;
-	Board board;
-	int size = 10;
+	after(): places(){
+		
+	}
+	
 	JPanel around(BattleshipDialog a): draw() && target(a){
 		JPanel content = new JPanel(new BorderLayout());
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -49,13 +59,15 @@ privileged public aspect AddStrategy {
         content.add(a.msgBar, BorderLayout.SOUTH);
         return content;
 	}
-	public void createPlayerWindow(ActionEvent event){
+	public  void createPlayerWindow(ActionEvent event){
 		//initialize variables
 		this.board = new Board(this.size);
 		this.strat = new SmartStrategy(this.size);
-		JDialog player = new JDialog();
+		this.player = new JDialog();
+		this.boardPanel = new BoardPanel(board);
+		
 		player.setLayout(new BorderLayout());
-		player.add(new BoardPanel(board), BorderLayout.CENTER);
+		player.add(boardPanel, BorderLayout.CENTER);
 		player.setSize(new Dimension(335, 440));
 		player.setTitle("Player Board");
 		int size = board.size();
@@ -81,6 +93,7 @@ privileged public aspect AddStrategy {
 			strat.doShot();
 			if(place.isHitShip())
 				strat.notifyHit(shot);
+			this.boardPanel.repaint();
 		}
 	}
 }
