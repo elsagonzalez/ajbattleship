@@ -14,16 +14,16 @@ public class SmartStrategy {
 		this.size= size;
 	}
 	void shootRandom(){
-		int random = (int)(Math.random()*this.size)+1;
+		int random = (int)(Math.random()*this.size*this.size)+1;
 		if(!history.contains(random))
 			this.moves.push(random);
 		else
 			shootRandom();
 	}
 	int checkShot(){
-		if(moves.isEmpty())
+		if(this.moves.isEmpty())
 			shootRandom();
-		return moves.peek();
+		return this.moves.peek();
 	}
 	int doShot(){
 		int shot = moves.pop();
