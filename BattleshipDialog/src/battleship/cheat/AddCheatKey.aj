@@ -34,34 +34,39 @@ privileged public aspect AddCheatKey {
 	after(Board b, int tMargin, int lMargin, int pSize, Color bColor, 
 			Color hColor, Color mColor, BoardPanel p): constructor() && 
 			args(b, tMargin , lMargin,  pSize, bColor, hColor, mColor) && target(p){
-		
-		showingBoats = false;
-		
-		ActionMap actionMap = p.getActionMap();
-		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
-		InputMap inputMap = p.getInputMap(condition);
-		String cheat = "Cheat";
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), cheat);
-		actionMap.put(cheat, new KeyAction(p, cheat));
+		if(panel == null ){
+			showingBoats = false;
+			ActionMap actionMap = p.getActionMap();
+			int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
+			InputMap inputMap = p.getInputMap(condition);
+			String cheat = "Cheat";
+			inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), cheat);
+			actionMap.put(cheat, new KeyAction(p, cheat));
 	
-		board = b;
-		topMargin = tMargin;
-		leftMargin = lMargin;
-		placeSize = pSize;
-		boardColor = bColor;
-		hitColor = hColor;
-		missColor = mColor;
-		panel = p;
+			board = b;
+			topMargin = tMargin;
+			leftMargin = lMargin;
+			placeSize = pSize;
+			boardColor = bColor;
+			hitColor = hColor;
+			missColor = mColor;
+			panel = p;
+		}
 	}
 	
-	void around(Graphics g): execution(void drawPlaces(Graphics)) && args(g){
-		if(showingBoats){
-			drawCheating(g);
+	void around(Graphics g, BoardPanel p): execution(void drawPlaces(Graphics)) && args(g) && target(p){
+		if(p == panel){
+			if(showingBoats){
+				drawCheating(g);
+			}
+			else{
+				proceed(g,p);
+			}
+			provisionalGraphics = g;
 		}
 		else{
-			proceed(g);
+			proceed(g,p);
 		}
-		provisionalGraphics = g;
 	}
 	
 	public void toggleCheat(){
