@@ -35,12 +35,15 @@ privileged public aspect AddStrategy {
 	//pointcut places(): execution(void BoardPanel.drawPlaces(*));
 	pointcut hit(): execution(void BoardPanel.placeClicked(Place));
 	pointcut places(): execution(void drawPlaces(Graphics));
-	after(Place x): hit() && args(x) {
-		if(this.player != null){
-			respondHit();
-			//TODO: bug here not going into if
-			if(!x.battleBoard.isGameOver() && !x.isHit())
+
+	after(Place x, BoardPanel hitPanel): hit() && args(x) && target(hitPanel){
+		if(hitPanel != boardPanel){
+			if(this.player != null){
 				respondHit();
+				//TODO: bug here not going into if
+				if(!x.battleBoard.isGameOver() && !x.isHit())
+					respondHit();
+			}
 		}
 	}
 	after(BattleshipDialog a): constructor() && target(a){
@@ -48,7 +51,7 @@ privileged public aspect AddStrategy {
 		a.playButton.setText("Practice");
 	}
 	after(Graphics g, BoardPanel a): places() && args(g) && target(a){
-		if(a.getParent() != this.mainDialog){
+		if(a == boardPanel){
 			final Color oldColor = g.getColor();
 		    for (Place p: a.board.places()) {
 				if (p.isHit()) {
@@ -74,7 +77,6 @@ privileged public aspect AddStrategy {
 		    g.setColor(oldColor);
 		}
 	}
-	
 	JPanel around(BattleshipDialog a): draw() && target(a){
 		JPanel content = new JPanel(new BorderLayout());
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -121,7 +123,7 @@ privileged public aspect AddStrategy {
 		player.setVisible(true);
         player.setDefaultCloseOperation(2);
 	}
-	public  void respondHit(){
+	public void respondHit(){
 		int shot = strat.checkShot();
 		Place place = board.at((shot/10)+1, (shot%10)+1);
 		if(!place.isHit()){
