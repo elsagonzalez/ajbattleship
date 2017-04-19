@@ -35,13 +35,13 @@ public class SmartStrategy {
 	void notifyHit(int place){
 		moves.removeAllElements();
 		//push some moves
-		int start = place -1 - this.size;
-		for(int i = start; i <= start + 2*this.size; i+=this.size){
-			for(int j = i; j <= i+2; j++){
-				if(isValid(j))
-					moves.push(j);
-			}
-		}
+		int[] next = {place+1, place-1, place + this.size, place-this.size};
+		for(int i = 0; i < next.length; i++)
+			if(isValid(next[i]))
+				moves.push(next[i]);
+	}
+	void notifySunk(){
+		moves.removeAllElements();
 	}
 	boolean isValid(int check){
 		boolean valid = true;

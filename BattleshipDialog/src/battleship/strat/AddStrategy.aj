@@ -1,8 +1,10 @@
 package battleship.strat;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.util.Random;
 
@@ -30,8 +32,9 @@ privileged public aspect AddStrategy {
 	
 	pointcut constructor(): execution(BattleshipDialog.new(*));
 	pointcut draw(): execution(JPanel BattleshipDialog.makeControlPane());
-	pointcut places(): execution(void BoardPanel.drawPlaces(*));
+	//pointcut places(): execution(void BoardPanel.drawPlaces(*));
 	pointcut hit(): execution(void BoardPanel.placeClicked(Place));
+	pointcut places(): execution(void drawPlaces(Graphics));
 	after(Place x): hit() && args(x) {
 		if(this.player != null){
 			respondHit();
@@ -44,8 +47,32 @@ privileged public aspect AddStrategy {
 		this.mainDialog = a;
 		a.playButton.setText("Practice");
 	}
-	after(): places(){
-		
+	after(Graphics g, BoardPanel a): places() && args(g) && target(a){
+		if(a.getParent() != this.mainDialog){
+			final Color oldColor = g.getColor();
+		    for (Place p: a.board.places()) {
+				if (p.isHit()) {
+				    int x = a.leftMargin + (p.getX() - 1) * a.placeSize;
+				    int y = a.topMargin + (p.getY() - 1) * a.placeSize;
+				    g.setColor(p.isEmpty() ? a.missColor : a.hitColor);
+				    g.fillRect(x + 1, y + 1, a.placeSize - 1, a.placeSize - 1);
+		            if (p.hasShip() && p.ship().isSunk()) {
+		                g.setColor(Color.BLACK);
+		                g.drawLine(x + 1, y + 1,
+		                        x + a.placeSize - 1, y + a.placeSize - 1);
+		                g.drawLine(x + 1, y + a.placeSize - 1,
+		                        x + a.placeSize - 1, y + 1);
+		            }
+				}
+				else if(p.hasShip()){
+					int x = a.leftMargin + (p.getX() - 1) * a.placeSize;
+				    int y = a.topMargin + (p.getY() - 1) * a.placeSize;
+			    	g.setColor(Color.yellow);
+			    	g.fillRect(x + 1, y + 1, a.placeSize - 1, a.placeSize - 1);
+			    }
+		    }
+		    g.setColor(oldColor);
+		}
 	}
 	
 	JPanel around(BattleshipDialog a): draw() && target(a){
@@ -94,14 +121,17 @@ privileged public aspect AddStrategy {
 		player.setVisible(true);
         player.setDefaultCloseOperation(2);
 	}
-	public void respondHit(){
+	public  void respondHit(){
 		int shot = strat.checkShot();
 		Place place = board.at((shot/10)+1, (shot%10)+1);
 		if(!place.isHit()){
 			board.hit(place);
 			strat.doShot();
 			if(place.isHitShip())
-				strat.notifyHit(shot);
+				if(place.ship().isSunk())
+					strat.notifySunk();
+				else
+					strat.notifyHit(shot);
 			this.boardPanel.repaint();
 		}
 	}

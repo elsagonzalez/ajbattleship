@@ -65,7 +65,7 @@ privileged public aspect AddCheatKey {
 			provisionalGraphics = g;
 		}
 		else{
-			proceed(g,p);
+			proceed(g, p);
 		}
 	}
 	
