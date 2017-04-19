@@ -21,6 +21,8 @@ public class SmartStrategy {
 			shootRandom();
 	}
 	int checkShot(){
+		printHistory();
+		System.out.println(this.moves.toString());
 		if(this.moves.isEmpty())
 			shootRandom();
 		return this.moves.peek();
@@ -31,7 +33,7 @@ public class SmartStrategy {
 		return shot;
 	}
 	void notifyHit(int place){
-		moves.empty();
+		moves.removeAllElements();
 		//push some moves
 		int start = place -1 - this.size;
 		for(int i = start; i <= start + 2*this.size; i+=this.size){
@@ -46,5 +48,12 @@ public class SmartStrategy {
 		if(check >=100 || check <0)
 			valid = false;
 		return valid && !history.contains(check);
+	}
+	void printHistory(){
+		System.out.print("[");
+		for(int i = 0; i < this.history.size(); i++){
+			System.out.print(this.history.get(i) + ", ");
+		}
+		System.out.println("]");
 	}
 }
