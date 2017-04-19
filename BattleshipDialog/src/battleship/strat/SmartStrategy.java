@@ -1,3 +1,14 @@
+/*
+ * @author Elsa Gonzalez-Aguilar
+ * @author Pedro Barragan
+ * @author Ulises Martinez
+ * This class implements the strategy that the computer
+ * will use to play against the user. It implements a 
+ * stack that will contain possible successful hits for 
+ * the computer to sink a boat as soon as it hits any 
+ * place that is part of a boat
+ */
+
 package battleship.strat;
 
 import java.util.List;

@@ -1,3 +1,17 @@
+/*
+ * @author Elsa Gonzalez-Aguilar
+ * @author Pedro Barragan
+ * @author Ulises Martinez
+ * This aspect will modify the play button to say "Practice,
+ * add an addiotional "Play" button that when pressed will 
+ * open another GUI with a different board for the computer 
+ * to play against the user. The board in this GUI will show
+ * the user boats at all times so the user can be aware of 
+ * the ships' status.
+ * This class also serves as interface with the SmartStrategy
+ * class.
+ */
+
 package battleship.strat;
 
 import java.awt.BorderLayout;

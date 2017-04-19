@@ -1,3 +1,12 @@
+/*
+ * @author Elsa Gonzalez-Aguilar
+ * @author Pedro Barragan
+ * @author Ulises Martinez
+ * This aspect will allow the user to cheat by pressing F5
+ * F5 will show buttons in green if they are not being shown yet
+ * or will hide the boats if they were shown
+ */
+
 package battleship.cheat;
 
 import java.awt.Color;

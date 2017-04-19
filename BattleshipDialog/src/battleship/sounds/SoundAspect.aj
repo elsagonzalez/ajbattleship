@@ -1,3 +1,11 @@
+/*
+ * @author Elsa Gonzalez-Aguilar
+ * @author Pedro Barragan
+ * @author Ulises Martinez
+ * This aspect plays a sound every time a place in the board is hit
+ * and a "COME ON!" sound every time a ship is sunk
+ */
+
 package battleship.sounds;
 
 import java.io.File;
@@ -17,7 +25,7 @@ import battleship.model.Place;
 import battleship.BattleshipDialog;
 
 privileged public aspect SoundAspect {
-	private static final String SOUND_DIR = "sounds/";
+	private static final String SOUND_DIR = "BattleshipDialog/sounds/";
 	//reference to original board
 	BattleshipDialog dialog = null;
 	//pointcuts
