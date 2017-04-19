@@ -53,9 +53,9 @@ privileged public aspect AddStrategy {
 	after(Place x, BoardPanel hitPanel): hit() && args(x) && target(hitPanel){
 		if(hitPanel != boardPanel){
 			if(this.player != null){
-				respondHit();
+				//respondHit();
 				//TODO: bug here not going into if
-				if(!x.battleBoard.isGameOver() && !x.isHit())
+				if(!x.battleBoard.isGameOver())
 					respondHit();
 			}
 		}

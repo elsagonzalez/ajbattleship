@@ -32,8 +32,8 @@ public class SmartStrategy {
 			shootRandom();
 	}
 	int checkShot(){
-		printHistory();
-		System.out.println(this.moves.toString());
+		//printHistory();
+		//System.out.println(this.moves.toString());
 		if(this.moves.isEmpty())
 			shootRandom();
 		return this.moves.peek();
@@ -44,7 +44,7 @@ public class SmartStrategy {
 		return shot;
 	}
 	void notifyHit(int place){
-		moves.removeAllElements();
+		//moves.removeAllElements();
 		//push some moves
 		int[] next = {place+1, place-1, place + this.size, place-this.size};
 		for(int i = 0; i < next.length; i++)
