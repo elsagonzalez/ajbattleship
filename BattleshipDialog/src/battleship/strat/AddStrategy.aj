@@ -19,6 +19,8 @@ import battleship.model.Ship;
 import battleship.model.Place;
 
 privileged public aspect AddStrategy {
+	//reference to main board
+	BattleshipDialog mainDialog = null;
 	//member variables
 	SmartStrategy strat;
 	Board board;
@@ -31,12 +33,15 @@ privileged public aspect AddStrategy {
 	pointcut places(): execution(void BoardPanel.drawPlaces(*));
 	pointcut hit(): execution(void BoardPanel.placeClicked(Place));
 	after(Place x): hit() && args(x) {
-		respondHit();
-		//TODO: bug here not going into if
-		if(!x.battleBoard.isGameOver() && !x.isHit())
+		if(this.player != null){
 			respondHit();
+			//TODO: bug here not going into if
+			if(!x.battleBoard.isGameOver() && !x.isHit())
+				respondHit();
+		}
 	}
 	after(BattleshipDialog a): constructor() && target(a){
+		this.mainDialog = a;
 		a.playButton.setText("Practice");
 	}
 	after(): places(){
@@ -59,8 +64,12 @@ privileged public aspect AddStrategy {
         content.add(a.msgBar, BorderLayout.SOUTH);
         return content;
 	}
-	public  void createPlayerWindow(ActionEvent event){
+	public void createPlayerWindow(ActionEvent event){
 		//initialize variables
+		this.mainDialog.msgBar.setText("Shots: 0");
+		this.mainDialog.board.reset();
+		this.mainDialog.placeShips();
+		this.mainDialog.repaint();
 		this.board = new Board(this.size);
 		this.strat = new SmartStrategy(this.size);
 		this.player = new JDialog();

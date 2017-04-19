@@ -14,16 +14,28 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import battleship.model.Board;
 import battleship.model.Place;
+import battleship.BattleshipDialog;
 
-public aspect SoundAspect {
+privileged public aspect SoundAspect {
 	private static final String SOUND_DIR = "sounds/";
-	before(Place x): call(void Board.hit(Place)) && args(x){
-		//stuff here
-		if (!x.isEmpty() && x.ship().isSunk()){
-			playAudio("sunk.wav");
-		}
-		else{
-			playAudio("hit.wav");
+	//reference to original board
+	BattleshipDialog dialog = null;
+	//pointcuts
+	pointcut hit(): call(void Board.hit(Place));
+	pointcut create(): execution(BattleshipDialog.new());
+	//advices
+	after(BattleshipDialog a): create() && target(a){
+		if(this.dialog == null)
+			this.dialog = a;
+	}
+	before(Place x, Board y): hit() && args(x) && target(y){
+		if(this.dialog.board == y){
+			if (!x.isEmpty() && x.ship().isSunk()){
+				playAudio("sunk.wav");
+			}
+			else{
+				playAudio("hit.wav");
+			}
 		}
 	}
 	public void playAudio(String filename) {
